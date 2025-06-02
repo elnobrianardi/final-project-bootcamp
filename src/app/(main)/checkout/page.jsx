@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CartData from '@/components/CartData'
 import PaymentOptions from '@/components/Payment'
-import { createTransaction } from '@/services/transaction'
+import { createTransaction } from '@/services/user/transaction'
 import { useRouter } from 'next/navigation'
 
 const CheckoutPage = () => {

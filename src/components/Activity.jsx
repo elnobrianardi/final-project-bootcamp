@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { fetchActivity, filterByCategory } from "@/services/activity"
+import { fetchActivity, filterByCategory } from "@/services/user/activity"
 import Link from "next/link"
 
 export default function CategoryFilter() {

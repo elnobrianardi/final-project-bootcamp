@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchCart } from '@/services/cart'
+import { fetchCart } from '@/services/user/cart'
 import { useEffect, useState } from 'react'
 
 const CartData = ({ onCartIdReady }) => {
@@ -20,8 +20,11 @@ const CartData = ({ onCartIdReady }) => {
       try {
         const data = await fetchCart(token)
         setCart(data)
+
+        // ✅ pastikan array of cart IDs
         if (data.length > 0) {
-          onCartIdReady(data[0].id)
+          const cartIds = data.map(item => item.id)
+          onCartIdReady(cartIds)
         }
       } catch (error) {
         console.error(error)

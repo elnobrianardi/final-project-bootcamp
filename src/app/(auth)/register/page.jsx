@@ -1,6 +1,6 @@
 "use client";
 
-import { register } from "@/services/auth";
+import { register } from "@/services/user/auth";
 import React, { useState } from "react";
 
 const Register = () => {

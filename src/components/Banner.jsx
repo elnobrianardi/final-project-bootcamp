@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchBanner } from '@/services/banner'
+import { fetchBanner } from '@/services/user/banner'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 

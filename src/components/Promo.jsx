@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchPromo } from '@/services/promo'
+import { fetchPromo } from '@/services/user/promo'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 

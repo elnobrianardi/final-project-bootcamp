@@ -1,4 +1,4 @@
-import { fetchPromoById } from '@/services/promo'
+import { fetchPromoById } from '@/services/user/promo'
 import React from 'react'
 
 const PromoDetails = async ({params}) => {

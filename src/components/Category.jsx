@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchCategory } from '@/services/category'
+import { fetchCategory } from '@/services/user/category'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 

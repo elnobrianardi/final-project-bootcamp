@@ -1,16 +1,15 @@
 'use client'
 
-import { fetchCart } from '@/services/cart'
-import { createTransaction } from '@/services/transaction'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { deleteCart, fetchCart, updateCart } from '@/services/user/cart'
+import { createTransaction } from '@/services/user/transaction'
 
 const Cart = () => {
   const router = useRouter()
   const [carts, setCarts] = useState([])
   const [token, setToken] = useState('')
 
-  // Ambil token dari localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
     if (storedToken) {
@@ -18,44 +17,66 @@ const Cart = () => {
     }
   }, [])
 
-  // Fetch carts setelah token ada
   useEffect(() => {
     const getCarts = async () => {
+      if (!token) return
       try {
-        if (!token) return // tunggu token tersedia
         const response = await fetchCart(token)
         setCarts(response || [])
-        console.log(response)
       } catch (error) {
         console.log(error)
       }
     }
 
     getCarts()
-  }, [token]) // bergantung pada token
+  }, [token, carts])
 
-  // Hitung total harga cart
   const getTotal = () => {
     return carts.reduce((acc, item) => {
       return acc + item.quantity * (item.activity.price ?? 0)
     }, 0)
   }
 
+  const handleUpdateQuantity = async (cartId, newQuantity) => {
+    if (newQuantity < 1) return
+    try {
+      await updateCart(cartId, token, newQuantity)
+      const updatedCarts = carts.map((item) =>
+        item.id === cartId ? { ...item, quantity: newQuantity } : item
+      )
+      setCarts(updatedCarts)
+    } catch (error) {
+      console.log(error)
+      alert('Gagal memperbarui jumlah.')
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      const cartId = carts[0].id
+      const response = await deleteCart(cartId, token)
+      return response
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleCheckout = async () => {
     try {
-      const response = await createTransaction(carts.id, token)
+      const cartIds = carts.map((item) => item.id)
+      const response = await createTransaction(cartIds, token)
       console.log(response)
       router.push('/checkout')
     } catch (error) {
-      console.log(error);
+      console.log(error)
       alert('Gagal membuat transaksi. Silakan coba lagi.')
     }
   }
 
   return (
-    <div>
+    <div className="p-4">
       {carts.length === 0 ? (
-        <h1>Cart is empty</h1>
+        <h1 className="text-xl font-semibold">Cart is empty</h1>
       ) : (
         <table className="table-auto border-collapse border border-gray-300 w-full">
           <thead>
@@ -85,17 +106,30 @@ const Cart = () => {
                 <td className="border border-gray-300 px-4 py-2">
                   Rp {(item.activity.price_discount ?? 0).toLocaleString('id-ID')}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{item.quantity}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded"
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded"
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </td>
                 <td className="border border-gray-300 px-4 py-2">
                   Rp {(item.quantity * (item.activity.price ?? 0)).toLocaleString('id-ID')}
                 </td>
               </tr>
             ))}
             <tr>
-              <td
-                colSpan={5}
-                className="border border-gray-300 px-4 py-2 font-bold text-right"
-              >
+              <td colSpan={5} className="border border-gray-300 px-4 py-2 font-bold text-right">
                 Total
               </td>
               <td className="border border-gray-300 px-4 py-2 font-bold">
@@ -105,7 +139,17 @@ const Cart = () => {
           </tbody>
         </table>
       )}
-      <button onClick={handleCheckout}>Checkout</button>
+
+      <button className='bg-red-500 py-2 px-5 rounded-lg text-white' onClick={handleDelete}>Delete Cart</button>
+
+      {carts.length > 0 && (
+        <button
+          onClick={handleCheckout}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Checkout
+        </button>
+      )}
     </div>
   )
 }

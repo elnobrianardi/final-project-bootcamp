@@ -1,7 +1,7 @@
 'use client'
 
-import { fetchActivityById } from '@/services/activity'
-import { addToCart } from '@/services/cart'
+import { fetchActivityById } from '@/services/user/activity'
+import { addToCart } from '@/services/user/cart'
 import { useEffect, useState } from 'react'
 
 const ActivityDetail = ({ params }) => {

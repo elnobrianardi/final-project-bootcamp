@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchPayment } from "@/services/payment"
+import { fetchPayment } from "@/services/user/payment"
 import { useState, useEffect } from "react"
 
 const PaymentOptions = ({ onPaymentIdSelect }) => {

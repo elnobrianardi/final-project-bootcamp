@@ -1,5 +1,4 @@
-
-import { fetchCategoryById } from '@/services/category'
+import { fetchCategoryById } from '@/services/user/category'
 import React from 'react'
 
 const categoryDetail = async ({params}) => {

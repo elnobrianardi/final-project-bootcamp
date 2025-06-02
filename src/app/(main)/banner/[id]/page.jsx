@@ -1,4 +1,4 @@
-import { fetchBannerById } from '@/services/banner'
+import { fetchBannerById } from '@/services/user/banner'
 import Image from 'next/image'
 
 const BannerDetails = async ({ params }) => {

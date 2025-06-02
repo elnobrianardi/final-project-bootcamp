@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { login } from '@/services/auth'
+import { login } from '@/services/user/auth'
 
 const Login = () => {
 
