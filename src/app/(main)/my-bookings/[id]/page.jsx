@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { fetchTransactionById } from '@/services/user/transaction'
 import { uploadPaymentProof } from '@/services/user/payment'
 import { uploadImage } from '@/services/user/uploadImage' // import service upload image
+import Cookies from 'js-cookie'
 
 export default function MyBookingDetail() {
   const { id } = useParams()
@@ -17,7 +18,7 @@ export default function MyBookingDetail() {
   const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) setToken(storedToken)
   }, [])
 

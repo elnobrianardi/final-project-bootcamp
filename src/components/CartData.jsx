@@ -1,6 +1,7 @@
 'use client'
 
 import { fetchCart } from '@/services/user/cart'
+import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 
 const CartData = ({ onCartIdReady }) => {
@@ -8,7 +9,7 @@ const CartData = ({ onCartIdReady }) => {
   const [token, setToken] = useState('')
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) {
       setToken(storedToken)
     }

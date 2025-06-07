@@ -1,6 +1,7 @@
 'use client'
 
 import { fetchLoggedUser } from '@/services/user/user'
+import Cookies from 'js-cookie'
 import React, { useEffect, useState } from 'react'
 
 const UserProfile = () => {
@@ -8,7 +9,7 @@ const UserProfile = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) {
       setToken(storedToken)
     }

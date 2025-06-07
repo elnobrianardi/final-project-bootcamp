@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 import { fetchLoggedUser, updateProfile } from '@/services/user/user'
 import { uploadImage } from '@/services/user/uploadImage'
 
 const UpdateProfile = () => {
   const [token, setToken] = useState('')
-  const [user, setUser] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,27 +19,28 @@ const UpdateProfile = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    if (storedToken) setToken(storedToken)
+    const cookieToken = Cookies.get('token')
+    if (cookieToken) setToken(cookieToken)
   }, [])
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUser = async () => {
       if (!token) return
       try {
-        const res = await fetchLoggedUser(token)
-        setUser(res)
+        const user = await fetchLoggedUser(token)
         setFormData({
-          name: res.name || '',
-          email: res.email || '',
-          profilePictureUrl: res.profilePictureUrl || '',
-          phoneNumber: res.phoneNumber || '',
+          name: user.name || '',
+          email: user.email || '',
+          profilePictureUrl: user.profilePictureUrl || '',
+          phoneNumber: user.phoneNumber || '',
         })
       } catch (err) {
         console.error('Gagal fetch user:', err)
+        setError('Gagal mengambil data pengguna')
       }
     }
-    getUser()
+
+    fetchUser()
   }, [token])
 
   const handleChange = (e) => {
@@ -50,8 +51,7 @@ const UpdateProfile = () => {
     const selected = e.target.files?.[0]
     if (selected) {
       setFile(selected)
-      const preview = URL.createObjectURL(selected)
-      setPreviewUrl(preview)
+      setPreviewUrl(URL.createObjectURL(selected))
     }
   }
 
@@ -64,9 +64,7 @@ const UpdateProfile = () => {
       let imageUrl = formData.profilePictureUrl
 
       if (file) {
-        console.log('Mengupload gambar...')
         imageUrl = await uploadImage(file, token)
-        console.log('URL gambar:', imageUrl)
       }
 
       const dataToSend = {
@@ -76,18 +74,16 @@ const UpdateProfile = () => {
         ...(formData.phoneNumber && { phoneNumber: formData.phoneNumber }),
       }
 
-      console.log('Data yang dikirim ke updateProfile:', dataToSend)
-
       await updateProfile(dataToSend, token)
-      setSuccess('Profile berhasil diperbarui.')
+      setSuccess('Profil berhasil diperbarui')
     } catch (err) {
       console.error('Gagal update profile:', err)
-      setError('Gagal update profile.')
+      setError('Gagal update profile')
     }
   }
 
   return (
-    <div className="p-4 max-w-md mx-auto space-y-4">
+    <div className="max-w-md mx-auto p-4 space-y-4">
       <h1 className="text-xl font-bold">Update Profile</h1>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
@@ -117,24 +113,14 @@ const UpdateProfile = () => {
           onChange={handleFileChange}
           className="w-full"
         />
-        {previewUrl && (
+        {(previewUrl || formData.profilePictureUrl) && (
           <img
-            src={previewUrl}
+            src={previewUrl || formData.profilePictureUrl}
             alt="Preview"
             className="w-32 h-32 object-cover rounded-full border"
           />
         )}
-        {!previewUrl && formData.profilePictureUrl && (
-          <img
-            src={formData.profilePictureUrl}
-            alt="Foto saat ini"
-            className="w-32 h-32 object-cover rounded-full border"
-          />
-        )}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded"
-        >
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
           Simpan
         </button>
         {success && <p className="text-green-500">{success}</p>}

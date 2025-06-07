@@ -1,6 +1,7 @@
 'use client'
 
 import { cancelTransaction, fetchTransaction } from '@/services/user/transaction'
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
@@ -9,7 +10,7 @@ const Transaction = () => {
   const [token, setToken] = useState(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) {
       setToken(storedToken)
     }

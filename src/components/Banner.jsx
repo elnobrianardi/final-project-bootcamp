@@ -13,7 +13,7 @@ const Banner = () => {
       const response = await fetchBanner()
       setBanners(response.data)
     } catch (error) {
-      console.log(error)
+      throw error
     }
   }
 

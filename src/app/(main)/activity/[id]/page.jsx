@@ -2,6 +2,7 @@
 
 import { fetchActivityById } from '@/services/user/activity'
 import { addToCart } from '@/services/user/cart'
+import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 
 const ActivityDetail = ({ params }) => {
@@ -22,7 +23,7 @@ const ActivityDetail = ({ params }) => {
     }
 
     // Ambil token dari localStorage dan simpan di state
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) {
       setToken(storedToken)
     }

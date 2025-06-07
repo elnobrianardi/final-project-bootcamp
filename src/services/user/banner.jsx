@@ -9,7 +9,7 @@ export const fetchBanner = async() => {
         })
         return response.data;
     } catch (error) {
-        console.log(error);
+        throw error
     }
 }
 
@@ -26,8 +26,7 @@ export const fetchBannerById = async (id) => {
     )
     return response.data.data
   } catch (error) {
-    console.error(error)
-    return null 
+    throw error
   }
 }
 

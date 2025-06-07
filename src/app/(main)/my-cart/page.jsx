@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteCart, fetchCart, updateCart } from '@/services/user/cart'
 import { createTransaction } from '@/services/user/transaction'
+import Cookies from 'js-cookie'
 
 const Cart = () => {
   const router = useRouter()
@@ -11,7 +12,7 @@ const Cart = () => {
   const [token, setToken] = useState('')
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) {
       setToken(storedToken)
     }

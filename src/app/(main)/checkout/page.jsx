@@ -5,6 +5,7 @@ import CartData from '@/components/CartData'
 import PaymentOptions from '@/components/Payment'
 import { createTransaction } from '@/services/user/transaction'
 import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
 const CheckoutPage = () => {
   const router = useRouter()
@@ -13,7 +14,7 @@ const CheckoutPage = () => {
   const [token, setToken] = useState('')
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = Cookies.get('token')
     if (storedToken) setToken(storedToken)
   }, [])
 
