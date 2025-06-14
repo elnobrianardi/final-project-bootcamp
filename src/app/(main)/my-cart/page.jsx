@@ -13,9 +13,7 @@ const Cart = () => {
 
   useEffect(() => {
     const storedToken = Cookies.get('token')
-    if (storedToken) {
-      setToken(storedToken)
-    }
+    if (storedToken) setToken(storedToken)
   }, [])
 
   useEffect(() => {
@@ -25,17 +23,18 @@ const Cart = () => {
         const response = await fetchCart(token)
         setCarts(response || [])
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
     getCarts()
-  }, [token, carts])
+  }, [token])
 
   const getTotal = () => {
-    return carts.reduce((acc, item) => {
-      return acc + item.quantity * (item.activity.price ?? 0)
-    }, 0)
+    return carts.reduce(
+      (acc, item) => acc + item.quantity * (item.activity.price ?? 0),
+      0
+    )
   }
 
   const handleUpdateQuantity = async (cartId, newQuantity) => {
@@ -47,109 +46,107 @@ const Cart = () => {
       )
       setCarts(updatedCarts)
     } catch (error) {
-      console.log(error)
+      console.error(error)
       alert('Gagal memperbarui jumlah.')
     }
   }
 
   const handleDelete = async () => {
+    if (carts.length === 0) return
     try {
       const cartId = carts[0].id
-      const response = await deleteCart(cartId, token)
-      return response
+      await deleteCart(cartId, token)
+      setCarts((prev) => prev.filter((item) => item.id !== cartId))
+      alert('Item berhasil dihapus.')
     } catch (error) {
-      console.log(error);
+      console.error(error)
+      alert('Gagal menghapus item.')
     }
   }
 
   const handleCheckout = async () => {
     try {
       const cartIds = carts.map((item) => item.id)
-      const response = await createTransaction(cartIds, token)
-      console.log(response)
+      await createTransaction(cartIds, token)
       router.push('/checkout')
     } catch (error) {
-      console.log(error)
-      alert('Gagal membuat transaksi. Silakan coba lagi.')
+      console.error(error)
+      alert('Gagal membuat transaksi.')
     }
   }
 
   return (
-    <div className="p-4">
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Keranjang Saya</h1>
+
       {carts.length === 0 ? (
-        <h1 className="text-xl font-semibold">Cart is empty</h1>
+        <p className="text-gray-500">Keranjang masih kosong.</p>
       ) : (
-        <table className="table-auto border-collapse border border-gray-300 w-full">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 px-4 py-2">Nama Aktivitas</th>
-              <th className="border border-gray-300 px-4 py-2">Gambar</th>
-              <th className="border border-gray-300 px-4 py-2">Harga</th>
-              <th className="border border-gray-300 px-4 py-2">Diskon</th>
-              <th className="border border-gray-300 px-4 py-2">Jumlah</th>
-              <th className="border border-gray-300 px-4 py-2">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {carts.map((item) => (
-              <tr key={item.id}>
-                <td className="border border-gray-300 px-4 py-2">{item.activity.title}</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <img
-                    src={item.activity.imageUrls?.[0] ?? ''}
-                    alt={item.activity.title}
-                    className="w-20 h-20 object-cover"
-                  />
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Rp {(item.activity.price ?? 0).toLocaleString('id-ID')}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Rp {(item.activity.price_discount ?? 0).toLocaleString('id-ID')}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      className="px-2 py-1 bg-gray-200 rounded"
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                    >
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      className="px-2 py-1 bg-gray-200 rounded"
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Rp {(item.quantity * (item.activity.price ?? 0)).toLocaleString('id-ID')}
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan={5} className="border border-gray-300 px-4 py-2 font-bold text-right">
-                Total
-              </td>
-              <td className="border border-gray-300 px-4 py-2 font-bold">
-                Rp {getTotal().toLocaleString('id-ID')}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      )}
+        <div className="space-y-6">
+          {carts.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col md:flex-row items-center gap-4 p-4 border border-transparent shadow rounded-xl bg-white"
+            >
+              <img
+                src={item.activity.imageUrls?.[0] ?? '/fallback-image.jpg'}
+                alt={item.activity.title}
+                className="w-full md:w-32 h-32 object-cover rounded-lg"
+                onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')}
+              />
+              <div className="flex-1 space-y-1">
+                <h2 className="text-lg font-semibold text-gray-800">{item.activity.title}</h2>
+                <p className="text-sm text-gray-500">
+                  Harga: Rp {(item.activity.price ?? 0).toLocaleString('id-ID')}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Diskon: Rp {(item.activity.price_discount ?? 0).toLocaleString('id-ID')}
+                </p>
+                <p className="text-sm text-gray-700 font-semibold">
+                  Subtotal: Rp {(item.quantity * (item.activity.price ?? 0)).toLocaleString('id-ID')}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                  className="bg-gray-200 px-3 py-1 rounded text-lg"
+                >
+                  −
+                </button>
+                <span className="min-w-[24px] text-center">{item.quantity}</span>
+                <button
+                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                  className="bg-gray-200 px-3 py-1 rounded text-lg"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          ))}
 
-      <button className='bg-red-500 py-2 px-5 rounded-lg text-white' onClick={handleDelete}>Delete Cart</button>
+          <div className="flex justify-between items-center border-t pt-4">
+            <h3 className="text-xl font-bold text-gray-800">Total:</h3>
+            <p className="text-xl font-bold text-emerald-600">
+              Rp {getTotal().toLocaleString('id-ID')}
+            </p>
+          </div>
 
-      {carts.length > 0 && (
-        <button
-          onClick={handleCheckout}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Checkout
-        </button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <button
+              onClick={handleDelete}
+              disabled={carts.length === 0}
+              className="w-full md:w-auto bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 disabled:bg-red-300 cursor-pointer"
+            >
+              Hapus Item Pertama
+            </button>
+            <button
+              onClick={handleCheckout}
+              className="w-full md:w-auto bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 cursor-pointer"
+            >
+              Checkout Sekarang
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

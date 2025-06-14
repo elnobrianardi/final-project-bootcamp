@@ -1,8 +1,9 @@
-import Activity from '@/components/Activity'
-import Banner from '@/components/Banner'
-import Category from '@/components/Category'
-import Navbar from '@/components/Navbar'
-import Promo from '@/components/Promo'
+import Activity from '@/components/user/ActivitySliced'
+import Banner from '@/components/user/Banner'
+import Category from '@/components/user/CategorySliced'
+import Footer from '@/components/user/Footer'
+import Navbar from '@/components/user/Navbar'
+import Promo from '@/components/user/PromoSliced'
 import React from 'react'
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
           <Promo/>
           <Category/>
           <Activity/>
+          <Footer/>
     </div>
   )
 }

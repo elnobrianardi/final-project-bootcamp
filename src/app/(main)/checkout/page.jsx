@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import CartData from '@/components/CartData'
-import PaymentOptions from '@/components/Payment'
+import CartData from '@/components/user/CartData'
+import PaymentOptions from '@/components/user/Payment'
 import { createTransaction } from '@/services/user/transaction'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
@@ -19,7 +19,7 @@ const CheckoutPage = () => {
   }, [])
 
   const handleBooking = async () => {
-    if (!cartIds || !paymentId) {
+    if (!cartIds.length || !paymentId) {
       alert('Cart atau metode pembayaran belum dipilih.')
       return
     }
@@ -35,13 +35,15 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Checkout</h1>
+    <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
+      <h1 className="text-2xl font-bold text-teal-700">Checkout</h1>
+
       <CartData onCartIdReady={setCartIds} />
       <PaymentOptions onPaymentIdSelect={setPaymentId} />
+
       <button
         onClick={handleBooking}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition cursor-pointer"
       >
         Booking
       </button>

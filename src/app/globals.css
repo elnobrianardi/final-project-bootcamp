@@ -3,3 +3,35 @@
 .my-button {
   @apply px-4 py-2 bg-[#80CBC4] text-white rounded hover:bg-[#B4EBE6];
 }
+
+.primary-color-bg {
+  background-color: #80CBC4;
+}
+
+.primary-color-text {
+  color: #80CBC4;
+}
+
+.secondary-color-bg {
+  background-color: #B4EBE6;
+}
+
+.secondary-color-text {
+  color: #B4EBE6;
+}
+
+.text-white-custom {
+    color: #FBF8EF;
+}
+
+.bg-white-custom {
+    background-color: #FBF8EF;
+}
+
+.text-yellow-custom {
+    color: #FFB433;
+}
+
+.bg-yellow-custom {
+    background-color: #FFB433;
+}

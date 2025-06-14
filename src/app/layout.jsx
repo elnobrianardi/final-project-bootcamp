@@ -1,5 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// NEW: Import ToastContainer and its CSS
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +26,18 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        {/* NEW: Add ToastContainer here */}
+        <ToastContainer 
+          position="top-right" // Position of the toasts
+          autoClose={3000}    // Toasts close after 3 seconds
+          hideProgressBar={false} // Show or hide the progress bar
+          newestOnTop={false}   // Newer toasts appear below older ones
+          closeOnClick        // Close toast on click
+          rtl={false}           // Right-to-left layout
+          pauseOnFocusLoss    // Pause autoClose when window is out of focus
+          draggable           // Allow dragging to dismiss
+          pauseOnHover        // Pause autoClose on hover
+        />
       </body>
     </html>
   );

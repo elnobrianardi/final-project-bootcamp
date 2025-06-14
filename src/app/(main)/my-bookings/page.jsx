@@ -1,12 +1,12 @@
-import Transaction from '@/components/Transaction'
 import React from 'react'
+import Transaction from '@/components/user/Transaction'
 
-const myBookings = () => {
+const MyBookings = () => {
   return (
-    <div>
-        <Transaction/>
+    <div className="px-4 md:px-8 py-8 min-h-screen bg-gray-50">
+      <Transaction />
     </div>
   )
 }
 
-export default myBookings
+export default MyBookings

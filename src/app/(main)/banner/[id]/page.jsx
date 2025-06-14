@@ -1,25 +1,23 @@
 import { fetchBannerById } from '@/services/user/banner'
-import Image from 'next/image'
 
 const BannerDetails = async ({ params }) => {
-  const resolvedParams = await params
-  
-  const banner = await fetchBannerById(resolvedParams.id)
+  const banner = await fetchBannerById(params.id)
 
   if (!banner) {
-    return <div className="p-4 text-red-500">Banner not found.</div>
+    return <div className="p-6 text-center text-red-500">Banner tidak ditemukan.</div>
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{banner.name}</h1>
-      <img
-        src={banner.imageUrl}
-        alt={banner.name}
-        width={800}
-        height={400}
-        className="rounded-lg object-cover"
-      />
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-center text-gray-800">{banner.name}</h1>
+
+      <div className="overflow-hidden rounded-xl shadow group border">
+        <img
+          src={banner.imageUrl}
+          alt={banner.name}
+          className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
     </div>
   )
 }

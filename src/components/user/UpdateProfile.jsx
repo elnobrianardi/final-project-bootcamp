@@ -83,48 +83,51 @@ const UpdateProfile = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
-      <h1 className="text-xl font-bold">Update Profile</h1>
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="bg-white border border-transparent shadow rounded-xl p-6 space-y-4">
+      <h2 className="text-xl font-semibold text-gray-800">Edit Profil</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="name"
           value={formData.name}
           onChange={handleChange}
-          placeholder="Name"
-          className="w-full border px-3 py-2 rounded"
+          placeholder="Nama"
+          className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-emerald-500 focus:outline-none"
         />
         <input
           name="email"
           value={formData.email}
           onChange={handleChange}
           placeholder="Email"
-          className="w-full border px-3 py-2 rounded"
+          className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-emerald-500 focus:outline-none"
         />
         <input
           name="phoneNumber"
           value={formData.phoneNumber}
           onChange={handleChange}
-          placeholder="Phone Number"
-          className="w-full border px-3 py-2 rounded"
+          placeholder="Nomor Telepon"
+          className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-emerald-500 focus:outline-none"
         />
         <input
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="w-full"
+          className="w-full text-sm text-gray-500"
         />
         {(previewUrl || formData.profilePictureUrl) && (
           <img
             src={previewUrl || formData.profilePictureUrl}
             alt="Preview"
-            className="w-32 h-32 object-cover rounded-full border"
+            className="w-24 h-24 object-cover rounded-full border"
           />
         )}
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Simpan
+        <button
+          type="submit"
+          className="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
+        >
+          Simpan Perubahan
         </button>
-        {success && <p className="text-green-500">{success}</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-600 text-sm">{success}</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </form>
     </div>
   )

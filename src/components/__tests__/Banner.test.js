@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react'
-import Banner from '../Banner'
+import Banner from '../user/Banner'
 import * as bannerService from '@/services/user/banner'
 
 // Mock fetchBanner to return banners immediately

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { fetchTransactionById } from '@/services/user/transaction'
 import { uploadPaymentProof } from '@/services/user/payment'
-import { uploadImage } from '@/services/user/uploadImage' // import service upload image
+import { uploadImage } from '@/services/user/uploadImage'
 import Cookies from 'js-cookie'
 
 export default function MyBookingDetail() {
@@ -58,12 +58,8 @@ export default function MyBookingDetail() {
     }
 
     try {
-      // Upload gambar dulu
       const uploadedImageUrl = await uploadImage(file, token)
-
-      // Kirim URL bukti pembayaran ke transaksi
       await uploadPaymentProof(id, uploadedImageUrl, token)
-
       setSuccess('Bukti pembayaran berhasil dikirim!')
     } catch (err) {
       console.error(err)
@@ -75,34 +71,48 @@ export default function MyBookingDetail() {
   if (!transaction) return <div className="p-4 text-red-500">Transaksi tidak ditemukan.</div>
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">Detail Transaksi</h1>
-      <p>Invoice: {transaction.invoiceId}</p>
-      <p className="text-lg">Pembayaran via: {transaction.payment_method.name}</p>
-      <p>Status: {transaction.status}</p>
-      <p>Total : {transaction.totalAmount}</p>
-      <div>
-        <h2 className="text-lg font-bold">Item</h2>
+    <div className="p-4 space-y-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold text-teal-700">Detail Transaksi</h1>
+
+      <div className="space-y-2 text-gray-700 bg-white p-4 rounded-xl shadow-sm border border-teal-100">
+        <p><span className="font-semibold">Invoice:</span> {transaction.invoiceId}</p>
+        <p><span className="font-semibold">Pembayaran via:</span> {transaction.payment_method.name}</p>
+        <p>
+          <span className="font-semibold">Status:</span>{' '}
+          <span className="capitalize text-teal-600">{transaction.status}</span>
+        </p>
+        <p><span className="font-semibold">Total:</span> Rp {transaction.totalAmount.toLocaleString()}</p>
+      </div>
+
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-teal-100">
+        <h2 className="text-lg font-bold text-teal-700">Item</h2>
         {transaction.transaction_items.map((item) => (
-          <div key={item.id}>
-            <p>Nama: {item.title}</p>
-            <p>Harga: {item.price}</p>
-            <p>Jumlah: {item.quantity}</p>
+          <div key={item.id} className="p-3 border border-teal-100 rounded-md bg-teal-50">
+            <p className="font-medium text-gray-800">Nama: {item.title}</p>
+            <p className="text-sm text-gray-600">Harga: Rp {item.price.toLocaleString()}</p>
+            <p className="text-sm text-gray-600">Jumlah: {item.quantity}</p>
           </div>
         ))}
       </div>
 
-      <div className="space-y-2">
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+      <div className="space-y-3">
+        <label className="block font-semibold text-gray-700">Upload Bukti Pembayaran:</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full border border-teal-300 rounded p-2 text-sm file:mr-3 file:py-1 file:px-4 file:border-0 file:rounded-md file:bg-teal-600 file:text-white hover:file:bg-teal-700 transition"
+        />
         {proofUrl && (
-          <img src={proofUrl} alt="Preview" className="w-40 h-auto border rounded-md" />
+          <img src={proofUrl} alt="Preview" className="w-40 h-auto border rounded-md shadow" />
         )}
         <button
-          className="bg-blue-500 text-white px-5 py-2 rounded-lg"
           onClick={handleUpload}
+          className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-md transition"
         >
-          Upload bukti pembayaran
+          Upload Bukti Pembayaran
         </button>
+
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-600">{success}</p>}
       </div>
