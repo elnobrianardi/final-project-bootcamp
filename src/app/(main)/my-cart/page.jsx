@@ -51,10 +51,8 @@ const Cart = () => {
     }
   }
 
-  const handleDelete = async () => {
-    if (carts.length === 0) return
+  const handleDelete = async (cartId) => {
     try {
-      const cartId = carts[0].id
       await deleteCart(cartId, token)
       setCarts((prev) => prev.filter((item) => item.id !== cartId))
       alert('Item berhasil dihapus.')
@@ -106,19 +104,29 @@ const Cart = () => {
                   Subtotal: Rp {(item.quantity * (item.activity.price ?? 0)).toLocaleString('id-ID')}
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+
+              <div className="flex flex-col items-center space-y-2 md:items-end">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    className="bg-gray-200 px-3 py-1 rounded text-lg cursor-pointer"
+                  >
+                    −
+                  </button>
+                  <span className="min-w-[24px] text-center">{item.quantity}</span>
+                  <button
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    className="bg-gray-200 px-3 py-1 rounded text-lg cursor-pointer"
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                  className="bg-gray-200 px-3 py-1 rounded text-lg"
+                  onClick={() => handleDelete(item.id)}
+                  className="text-sm text-red-600 hover:underline cursor-pointer"
                 >
-                  −
-                </button>
-                <span className="min-w-[24px] text-center">{item.quantity}</span>
-                <button
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                  className="bg-gray-200 px-3 py-1 rounded text-lg"
-                >
-                  +
+                  Hapus
                 </button>
               </div>
             </div>
@@ -131,17 +139,10 @@ const Cart = () => {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4">
-            <button
-              onClick={handleDelete}
-              disabled={carts.length === 0}
-              className="w-full md:w-auto bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 disabled:bg-red-300 cursor-pointer"
-            >
-              Hapus Item Pertama
-            </button>
+          <div className="flex justify-end">
             <button
               onClick={handleCheckout}
-              className="w-full md:w-auto bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 cursor-pointer"
+              className="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 cursor-pointer"
             >
               Checkout Sekarang
             </button>

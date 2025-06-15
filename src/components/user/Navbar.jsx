@@ -48,7 +48,6 @@ const Navbar = () => {
     { label: 'Home', href: '/' },
     { label: 'Activities', href: '/activity' },
     { label: 'Booking', href: '/my-bookings' },
-    { label: 'About', href: '/about' }
   ]
 
   return (
