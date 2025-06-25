@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchActivity, filterByCategory } from "@/services/user/activity";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const fallbackImage = "/fallback-image.jpg";
 
@@ -66,7 +67,13 @@ export default function Activity() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.8 }}
+      transition={{ duration: 0.6 }}
+      className="max-w-7xl mx-auto px-4 py-10"
+    >
       <h1 className="text-3xl font-bold text-center text-teal-700 mb-8">
         Aktivitas Menarik
       </h1>
@@ -102,24 +109,31 @@ export default function Activity() {
             href={`/activity/${item.id}`}
             className="block bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
           >
-            <img
-              src={item.imageUrls?.[0] || fallbackImage}
-              alt={item.title}
-              onError={(e) => {
-                e.currentTarget.src = fallbackImage;
-              }}
-              className="w-full h-44 object-cover"
-              loading="lazy"
-            />
-            <div className="p-4">
-              <h2 className="text-lg font-semibold text-teal-800 mb-1">{item.title}</h2>
-              <p className="text-sm text-gray-600">
-                {item.city}, {item.province}
-              </p>
-              <p className="text-sm mt-2 font-semibold text-teal-600">
-                Rp {item.price_discount}
-              </p>
-            </div>
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.3 }}
+            >
+              <img
+                src={item.imageUrls?.[0] || fallbackImage}
+                alt={item.title}
+                onError={(e) => {
+                  e.currentTarget.src = fallbackImage;
+                }}
+                className="w-full h-44 object-cover"
+                loading="lazy"
+              />
+              <div className="p-4">
+                <h2 className="text-lg font-semibold text-teal-800 mb-1">
+                  {item.title}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  {item.city}, {item.province}
+                </p>
+                <p className="text-sm mt-2 font-semibold text-teal-600">
+                  Rp {item.price_discount}
+                </p>
+              </div>
+            </motion.div>
           </Link>
         ))}
       </div>
@@ -129,7 +143,7 @@ export default function Activity() {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 border rounded-md disabled:opacity-50 hover:bg-gray-100 transition"
+          className="px-4 py-2 border rounded-md disabled:opacity-50 hover:bg-gray-100 transition cursor-pointer"
         >
           Prev
         </button>
@@ -138,7 +152,7 @@ export default function Activity() {
           <button
             key={num}
             onClick={() => handlePageChange(num)}
-            className={`px-4 py-2 border rounded-md transition ${
+            className={`px-4 py-2 border rounded-md transition cursor-pointer ${
               currentPage === num
                 ? "bg-teal-600 text-white"
                 : "hover:bg-gray-100"
@@ -151,11 +165,11 @@ export default function Activity() {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 border rounded-md disabled:opacity-50 hover:bg-gray-100 transition"
+          className="px-4 py-2 border rounded-md disabled:opacity-50 hover:bg-gray-100 transition cursor-pointer"
         >
           Next
         </button>
       </div>
-    </section>
+    </motion.section>
   );
 }

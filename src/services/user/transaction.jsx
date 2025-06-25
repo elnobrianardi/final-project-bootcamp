@@ -21,7 +21,7 @@ export const createTransaction = async (data, token) => {
   }
 };
 
-export const fetchTransaction = async (token) => {
+export const fetchMyTransaction = async (token) => {
   try {
     const response = await axios.get(
       "https://travel-journal-api-bootcamp.do.dibimbing.id/api/v1/my-transactions",

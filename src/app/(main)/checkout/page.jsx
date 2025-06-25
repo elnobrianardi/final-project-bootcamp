@@ -6,6 +6,8 @@ import PaymentOptions from '@/components/user/Payment'
 import { createTransaction } from '@/services/user/transaction'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
+import { toast } from 'react-toastify'
+import { motion } from 'framer-motion'
 
 const CheckoutPage = () => {
   const router = useRouter()
@@ -20,22 +22,27 @@ const CheckoutPage = () => {
 
   const handleBooking = async () => {
     if (!cartIds.length || !paymentId) {
-      alert('Cart atau metode pembayaran belum dipilih.')
+      toast.warning('Cart atau metode pembayaran belum dipilih.')
       return
     }
 
     try {
       await createTransaction({ cartIds, paymentMethodId: paymentId }, token)
-      alert('Booking berhasil!')
+      toast.success('Booking berhasil!')
       router.push('/my-bookings')
     } catch (error) {
       console.error(error)
-      alert('Booking gagal.')
+      toast.error('Booking gagal. Silakan coba lagi.')
     }
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6"
+    >
       <h1 className="text-2xl font-bold text-teal-700">Checkout</h1>
 
       <CartData onCartIdReady={setCartIds} />
@@ -47,7 +54,7 @@ const CheckoutPage = () => {
       >
         Booking
       </button>
-    </div>
+    </motion.div>
   )
 }
 

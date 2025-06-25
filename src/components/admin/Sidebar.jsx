@@ -9,6 +9,7 @@ const navLinks = [
   { label: 'Categories', href: '/admin/category' },
   { label: 'Users', href: '/admin/user' },
   { label: 'Banner', href: '/admin/banner' },
+  {label: 'Transaction', href: '/admin/transaction'},
 ]
 
 const AdminSidebar = () => {

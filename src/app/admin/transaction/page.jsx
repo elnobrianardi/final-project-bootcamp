@@ -1,8 +1,11 @@
+import AllTransaction from '@/components/admin/AllTransaction'
 import React from 'react'
 
 const Transaction = () => {
   return (
-    <div>Transaction</div>
+    <div>
+      <AllTransaction/>
+    </div>
   )
 }
 

@@ -4,11 +4,17 @@ import React, { useEffect, useState, useMemo } from 'react'
 import Cookies from 'js-cookie'
 import { fetchBanner } from '@/services/user/banner'
 import { createBanner, updateBanner, deleteBanner } from '@/services/admin/banner'
+import { uploadImage } from '@/services/user/uploadImage'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const AllBanner = () => {
   const [banners, setBanners] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', imageUrl: '', link: '', id: null })
+  const [file, setFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
@@ -20,7 +26,7 @@ const AllBanner = () => {
         const response = await fetchBanner()
         setBanners(response.data || [])
       } catch (error) {
-        console.log('Error fetching banners:', error)
+        toast.error('Failed to fetch banners')
         setBanners([])
       } finally {
         setLoading(false)
@@ -34,9 +40,25 @@ const AllBanner = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  const handleFileChange = async (e) => {
+    const selected = e.target.files?.[0]
+    if(!selected) return
+    setFile(selected)
+    setPreviewUrl(URL.createObjectURL(selected))
+
+    try {
+      const imageUrl = await uploadImage(selected, token)
+      setFormData((prev) => ({...prev, imageUrl}))
+      toast.success('Image Uploaded')
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to upload image')
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!token) return alert('Token not found.')
+    if (!token) return toast.error('Token not found.')
 
     try {
       if (formData.id) {
@@ -45,16 +67,22 @@ const AllBanner = () => {
           imageUrl: formData.imageUrl,
           link: formData.link
         }, token)
+        toast.success('Banner updated!')
       } else {
         await createBanner({
           name: formData.name,
           imageUrl: formData.imageUrl,
           link: formData.link
         }, token)
+        toast.success('Banner created!')
       }
-      location.reload()
+
+      setShowForm(false)
+      setFormData({ name: '', imageUrl: '', link: '', id: null })
+      const response = await fetchBanner()
+      setBanners(response.data || [])
     } catch (error) {
-      console.log(error)
+      toast.error('Failed to save banner')
     }
   }
 
@@ -65,17 +93,19 @@ const AllBanner = () => {
       imageUrl: banner.imageUrl,
       link: banner.link
     })
+    setShowForm(true)
   }
 
   const handleDelete = async (id) => {
-    if (!token) return alert('Token not found.')
+    if (!token) return toast.error('Token not found.')
     if (!confirm('Are you sure you want to delete this banner?')) return
 
     try {
       await deleteBanner(id, token)
       setBanners(banners.filter((banner) => banner.id !== id))
+      toast.success('Banner deleted!')
     } catch (error) {
-      console.log(error)
+      toast.error('Failed to delete banner')
     }
   }
 
@@ -119,18 +149,33 @@ const AllBanner = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">All Banners</h1>
+      <button onClick={() => setShowForm(true)} className="mb-4 bg-green-500 text-white px-4 py-2 rounded">
+        Create New Banner
+      </button>
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} className="mb-6 bg-gray-100 p-4 rounded">
-        <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Title" required className="p-2 mr-2 mb-2 border rounded w-full" />
-        <input type="text" name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="Image URL" required className="p-2 mr-2 mb-2 border rounded w-full" />
-        <input type="text" name="link" value={formData.link} onChange={handleChange} placeholder="Link (optional)" className="p-2 mr-2 mb-2 border rounded w-full" />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          {formData.id ? 'Update' : 'Create'}
-        </button>
-      </form>
+      {showForm && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex justify-center items-center z-10">
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded w-full max-w-md shadow-md">
+            <h2 className="text-lg font-bold mb-4">{formData.id ? 'Edit Banner' : 'Create Banner'}</h2>
+            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Title" required className="mb-2 p-2 border rounded w-full" />
+            <input type="file" accept='image/*' onChange={handleFileChange} className='mb-2 w-full border p-2 rounded text-sm' />
+            {previewUrl || formData.imageUrl? (
+              <img src={previewUrl || formData.imageUrl} alt="preview" className='w-full h-40 object-cover rounded mb-4 border'/>
+              )  : null
+            }
+            <input type="text" name="link" value={formData.link} onChange={handleChange} placeholder="Link (optional)" className="mb-4 p-2 border rounded w-full" />
+            <div className="flex justify-end gap-2">
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded">
+                Cancel
+              </button>
+              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                {formData.id ? 'Update' : 'Create'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
-      {/* TABLE */}
       <table className="w-full border text-sm">
         <thead className="bg-gray-200">
           <tr>
@@ -146,7 +191,7 @@ const AllBanner = () => {
               <td className="p-2 border">{indexOfFirstItem + index + 1}</td>
               <td className="p-2 border">{banner.name}</td>
               <td className="p-2 border">
-                {banner.imageUrl ? <img src={banner.imageUrl} alt={banner.name} className="h-10 w-auto" /> : '-'}
+                <img src={banner.imageUrl} alt={banner.name} className="h-12 w-auto object-cover" onError={(e) => e.currentTarget.src = '/fallback-image.jpg'} />
               </td>
               <td className="p-2 border space-x-2">
                 <button onClick={() => handleEdit(banner)} className="text-yellow-600 hover:underline">Edit</button>
@@ -157,16 +202,19 @@ const AllBanner = () => {
         </tbody>
       </table>
 
-      {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-6">
-          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">Prev</button>
-          {pageNumbers.map(page => (
+          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">
+            Prev
+          </button>
+          {pageNumbers.map((page) => (
             <button key={page} onClick={() => handlePageChange(page)} className={`px-3 py-1 rounded ${page === currentPage ? 'bg-blue-700 text-white' : 'bg-gray-200'}`}>
               {page}
             </button>
           ))}
-          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
+          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">
+            Next
+          </button>
         </div>
       )}
     </div>

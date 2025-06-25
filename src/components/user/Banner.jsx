@@ -1,42 +1,47 @@
-'use client'
+"use client";
 
-import { fetchBanner } from '@/services/user/banner'
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { fetchBanner } from "@/services/user/banner";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-const fallbackImage = '/fallback-image.jpg'
+const fallbackImage = "/fallback-image.jpg";
 
 const Banner = () => {
-  const [banners, setBanners] = useState([])
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [banners, setBanners] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const getBanner = async () => {
       try {
-        const response = await fetchBanner()
-        setBanners(response.data)
+        const response = await fetchBanner();
+        setBanners(response.data);
       } catch (error) {
-        console.error('Failed to fetch banners:', error)
+        console.error("Failed to fetch banners:", error);
       }
-    }
+    };
 
-    getBanner()
-  }, [])
+    getBanner();
+  }, []);
 
   useEffect(() => {
-    if (!banners.length) return
+    if (!banners.length) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) =>
-        prev === banners.length - 1 ? 0 : prev + 1
-      )
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [banners])
+      setCurrentIndex((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners]);
 
-  if (!banners.length) return null
+  if (!banners.length) return null;
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto mt-6 rounded-lg overflow-hidden shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="relative w-full max-w-6xl mx-auto mt-6 rounded-lg overflow-hidden shadow-lg"
+    >
       <div
         className="flex transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -70,13 +75,13 @@ const Banner = () => {
           <div
             key={i}
             className={`h-2 w-2 rounded-full transition-all ${
-              i === currentIndex ? 'bg-teal-500 w-4' : 'bg-white/70'
+              i === currentIndex ? "bg-teal-500 w-4" : "bg-white/70"
             }`}
           />
         ))}
       </div>
-    </div>
-  )
-}
+    </motion.div>
+  );
+};
 
-export default Banner
+export default Banner;
