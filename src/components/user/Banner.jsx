@@ -4,12 +4,14 @@ import { fetchBanner } from "@/services/user/banner";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { LoaderCircle } from "lucide-react";
 
 const fallbackImage = "/fallback-image.jpg";
 
 const Banner = () => {
   const [banners, setBanners] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getBanner = async () => {
@@ -18,6 +20,8 @@ const Banner = () => {
         setBanners(response.data);
       } catch (error) {
         console.error("Failed to fetch banners:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -33,6 +37,21 @@ const Banner = () => {
   }, [banners]);
 
   if (!banners.length) return null;
+
+  if (loading) {
+  return (
+    <div className="flex justify-center items-center p-8">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+        className="text-teal-600"
+      >
+        <LoaderCircle size={32} className="animate-spin" />
+      </motion.div>
+      <span className="ml-3 text-gray-600">Memuat data keranjang...</span>
+    </div>
+  )
+}
 
   return (
     <motion.div

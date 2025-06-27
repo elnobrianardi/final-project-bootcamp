@@ -5,14 +5,16 @@ import { useRouter } from 'next/navigation'
 import { deleteCart, fetchCart, updateCart } from '@/services/user/cart'
 import { createTransaction } from '@/services/user/transaction'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { motion } from 'framer-motion'
+import { LoaderCircle } from 'lucide-react'
 
 const Cart = () => {
   const router = useRouter()
   const [carts, setCarts] = useState([])
   const [token, setToken] = useState('')
   const [selectedIds, setSelectedIds] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const storedToken = Cookies.get('token')
@@ -32,6 +34,7 @@ const Cart = () => {
     }
 
     getCarts()
+    setLoading(false)
   }, [token])
 
   const handleSelect = (cartId) => {
@@ -79,6 +82,8 @@ const Cart = () => {
       return
     }
 
+    localStorage.setItem('selectedCartIds', JSON.stringify(selectedIds))
+
     try {
       await createTransaction(selectedIds, token)
       toast.success('Transaksi berhasil dibuat.')
@@ -86,8 +91,25 @@ const Cart = () => {
     } catch (error) {
       console.error(error)
       toast.error('Gagal membuat transaksi.')
+    } finally {
+      setLoading(false)
     }
   }
+
+  if (loading) {
+  return (
+    <div className="flex justify-center items-center p-8">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+        className="text-teal-600"
+      >
+        <LoaderCircle size={32} className="animate-spin" />
+      </motion.div>
+      <span className="ml-3 text-gray-600">Memuat data keranjang...</span>
+    </div>
+  )
+}
 
   return (
     <motion.div
@@ -184,6 +206,7 @@ const Cart = () => {
           </div>
         </div>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </motion.div>
   )
 }

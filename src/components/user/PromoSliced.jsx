@@ -4,11 +4,13 @@ import { fetchPromo } from "@/services/user/promo";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { LoaderCircle } from "lucide-react";
 
 const Promo = () => {
   const [promos, setPromos] = useState([]);
   const MAX_PROMOS = 8;
   const fallbackImage = "/fallback-image.jpg";
+  const [loading, setLoading] = useState(true);
 
   const getPromo = async () => {
     try {
@@ -16,6 +18,8 @@ const Promo = () => {
       setPromos(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -25,6 +29,13 @@ const Promo = () => {
 
   const displayedPromos = promos.slice(0, MAX_PROMOS);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoaderCircle className="animate-spin" />
+      </div>
+    );
+  }
   return (
     <motion.section
       initial={{ opacity: 0, y: 30 }}

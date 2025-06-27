@@ -6,7 +6,7 @@ import { fetchTransactionById } from '@/services/user/transaction'
 import { uploadPaymentProof } from '@/services/user/payment'
 import { uploadImage } from '@/services/user/uploadImage'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { motion } from 'framer-motion'
 
 export default function MyBookingDetail() {
@@ -135,6 +135,7 @@ export default function MyBookingDetail() {
           Upload Bukti Pembayaran
         </motion.button>
       </motion.div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </motion.div>
   )
 }

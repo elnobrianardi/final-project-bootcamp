@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import Activity from '@/components/user/ActivitySliced'
 import Banner from '@/components/user/Banner'

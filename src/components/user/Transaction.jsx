@@ -8,11 +8,13 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import { LoaderIcon } from 'lucide-react';
 
 const Transaction = () => {
   const [myTransaction, setMyTransaction] = useState([]);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
   const fallbackImage = '/fallback-image.jpg';
 
   useEffect(() => {
@@ -30,6 +32,8 @@ const Transaction = () => {
         setMyTransaction(response);
       } catch (error) {
         toast.error('Gagal mengambil data transaksi.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -48,6 +52,13 @@ const Transaction = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoaderIcon className="animate-spin" />
+      </div>
+    );
+  }
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -138,6 +149,7 @@ const Transaction = () => {
           </motion.div>
         ))
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </motion.div>
   );
 };

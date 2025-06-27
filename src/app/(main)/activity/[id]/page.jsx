@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { fetchActivityById } from '@/services/user/activity'
 import { addToCart } from '@/services/user/cart'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion } from 'framer-motion'
 
@@ -144,6 +144,7 @@ const ActivityDetail = ({ params }) => {
           Tambahkan ke Keranjang
         </button>
       </motion.div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </motion.div>
   )
 }
